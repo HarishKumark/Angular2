@@ -1,0 +1,86 @@
+.form-element {
+    width: 50%;
+  }
+  
+  .full-width {
+    width: 100%;
+  }
+  
+  .mat-checkbox {
+    margin-right: 40%;
+  
+  }
+  
+  .submitform {
+    position: relative;
+    left: 50%;
+    right: 50%;
+    margin: 20px;
+  }
+  
+  .attachfile {
+    width: 100%;
+    padding: 12px 20px;
+    margin: 8px 0;
+  }
+  
+  .file_upload {
+    background-color: #eeeeee;
+    color: rgba(0, 0, 0, 0.87);
+    padding: 15px 32px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 15px;
+  }
+  
+  .infolink:before {
+    content: '?';
+    display: inline-block;
+    font-family: sans-serif;
+    font-weight: bold;
+    text-align: center;
+    width: 1.8ex;
+    height: 1.8ex;
+    font-size: 1.4ex;
+    line-height: 1.8ex;
+    border-radius: 1.2ex;
+    margin-right: 4px;
+    padding: 1px;
+    color:  #E87722;
+    background: white;
+    border: 1px solid  #E87722;
+    text-decoration: none;
+  }
+  
+  .infolink:hover:before {
+    color: white;
+    background:  #E87722;
+    border-color: white;
+    text-decoration: none;
+  }
+  
+  
+  
+  
+  /* .mat-tooltip {
+    font-size: 14px !important;
+  } */
+  
+  
+  ::ng-deep .mat-tooltip {
+    /* your own custom styles here */ 
+    /* e.g. */
+    color: yellow;
+  
+    font-size: 14px !important;
+  }
+  
+  
+  #upload_button {
+    display: inline-block;
+  }
+  #upload_button input[type=file] {
+    display:none;
+  }
+  

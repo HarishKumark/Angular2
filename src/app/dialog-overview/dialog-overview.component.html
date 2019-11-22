@@ -1,0 +1,12 @@
+<mat-dialog-content class="mat-typography">
+    <form [formGroup]="dialogForm" class="form">
+        <div *ngFor="let interest of multipleCheckBox; let i = index">
+            <mat-checkbox (change)="onChange($event)" [value]="interest">{{interest}} </mat-checkbox>
+        </div>
+    </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+    <button mat-button mat-dialog-close>Ok</button>
+    <!-- <button mat-button [mat-dialog-close]="true" cdkFocusInitial>Install</button> -->
+</mat-dialog-actions>
