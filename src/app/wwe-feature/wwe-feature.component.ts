@@ -12,23 +12,13 @@ import { HierarchicalrequirementService } from '../services/hierarchicalrequirem
 export class WweFeatureComponent implements OnInit {
 
   routingForm: FormGroup;
-
-
   scenerioVal: any;
   test = false;
-
   @Input() bizUnitVal;
   @Input() scrumTeam;
   @Input() deliverDate;
-
-  
   @Output() wweJson = new EventEmitter();
-
-
-
   @Input() selectedRequestType: any = [];
-
-
 
   wweFeatures = [
     { value: '1', label: 'Case Information (Iteration)' },
@@ -39,30 +29,20 @@ export class WweFeatureComponent implements OnInit {
     { value: '6', label: 'Screen pop' },
     { value: '7', label: 'Corporate Favourites' },
   ];
-  
-  
 
   @Input() multipleCheckBox: any;
 
-
-
   // tslint:disable-next-line: max-line-length
   constructor(private fb: FormBuilder, private http: HttpClient,
-     private hierarchicalrequirementService: HierarchicalrequirementService, private dateFormat: DatePipe) { }
-
-
+    private hierarchicalrequirementService: HierarchicalrequirementService, private dateFormat: DatePipe) { }
   ngOnInit() {
     this.createForm();
-
     setTimeout((res) => {
       // tslint:disable-next-line: max-line-length
       // this.multipleCheckBox = ['Case Information (Iteration)', 'Case Information (Toast pop)', 'Not Ready Reasons', 'Disposition Codes', 'Caller ID', 'Screen pop',
       //   'Corporate Favourites'];
     });
-
   }
-
-
 
   createForm() {
     this.routingForm = this.fb.group({
@@ -78,19 +58,15 @@ export class WweFeatureComponent implements OnInit {
         OtherData: [''],
         fileInfo: ['']
       }),
-      
+
     });
-
-    // this.routingForm.valueChanges
-    //   .subscribe(data => this.onValueChanged(data));
-
   }
 
   onValueChanged(data: any): void {
     console.log('data ', data);
   }
 
- onChange(event) {
+  onChange(event) {
     const interests = <FormArray>this.routingForm.get('WWEfeatures').get('multipleCheckBox') as FormArray;
     if (event.checked) {
       interests.push(new FormControl(event.source.value));
@@ -100,11 +76,6 @@ export class WweFeatureComponent implements OnInit {
       this.selectedRequestType.pop(i);
       interests.removeAt(i);
     }
-
     console.log('interests', interests);
-
   }
-
-
-
 }

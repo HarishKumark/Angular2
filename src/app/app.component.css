@@ -54,7 +54,7 @@
     float: left;
     overflow-y: auto!important;
     height: calc(100% - 51%);
-    max-height: 44%;
+    max-height: 48%;
   }
   .grid-right-side{
     width: 48%;
@@ -62,11 +62,10 @@
     border-left: 3px solid #e5e5e5;
     padding-left: 20px;
     overflow-y: auto;
-    height: calc(100% - 52%);
-  }
+      max-height: 48%; }
   .form {
     width: 100%;
-    height: auto;
+ 
 }
 .half_check{
   float: left;

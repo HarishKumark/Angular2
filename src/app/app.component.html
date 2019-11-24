@@ -4,8 +4,9 @@
       <span class="fill-remaining-space">User Story Template</span>
     </mat-toolbar>
   </div>
-  <div style="margin-top: 6%">
-    <div class="container" fxLayout="row" fxLayout.xs="column" fxLayoutGap="2%" fxLayoutAlign="left">
+  <div style="padding-top: 5%">
+    <div class="container" fxLayout="row" fxLayout.xs="column" fxLayoutGap="2%" fxLayoutAlign="left"
+      style="height: calc(100vh - -39vw);">
       <form [formGroup]="routingForm" class="form" (ngSubmit)="submitForm($event)">
 
 
@@ -28,7 +29,6 @@
                 <mat-label>Business Segment or LOB</mat-label>
                 <mat-form-field class="full-width" appearance="outline">
                   <mat-select formControlName="bizSegment">
-                    <mat-icon>mood</mat-icon>
                     <mat-option *ngFor="let bizSegment of bizSegments" [value]="bizSegment">
                       {{bizSegment}}
                     </mat-option>
@@ -59,7 +59,7 @@
               <div class="l-item5">
                 <mat-label>Created By</mat-label>
                 <mat-form-field class="full-width" appearance="outline">
-                  <input matInput placeholder="Created by" formControlName="createdBy" (blur)="validateCreatedBy()">
+                  <input matInput placeholder="Created by" formControlName="createdBy">
                 </mat-form-field>
               </div>
 
@@ -200,7 +200,8 @@
                         </div>
 
                         <div class="others">
-                          <mat-checkbox class="others_label"(change)="testVal($event)" [value]="'Others'">{{"Others"}}</mat-checkbox>
+                          <mat-checkbox class="others_label" (change)="testVal($event)" [value]="'Others'">{{"Others"}}
+                          </mat-checkbox>
                         </div>
                         <div *ngIf="selectedOtherData ==  'Others'">
 
@@ -345,7 +346,10 @@
                 </app-wwe-feature>
               </div>
 
-              <button style="margin: 2px; color: primary" class="btn btn-primary mr-1">Submit</button>
+              <button mat-stroked-button mat-flat-button style="margin-left: 40%;margin-top: 2%;margin-bottom: 2%;"
+                [disabled]="!(routingForm.get('WWEfeatures').valid && routingForm.get('itemRows').valid)"
+                (click)="wweFeatureClick(routingForm)">Submit</button>
+
             </div>
 
           </div>

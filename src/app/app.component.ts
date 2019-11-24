@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, FormArray, Validators } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
-import { MatDialog } from "@angular/material";
+import { MatDialog } from '@angular/material';
 import { DatePipe } from '@angular/common';
 
 @Component({
@@ -133,27 +133,27 @@ export class AppComponent {
       }),
 
       preQueueDetails: this.fb.group({
-        emergencyMsg: '',
-        NoAgentMsg: '',
-        customPreQueueMsg: '',
-        badWeatherMsg: '',
+        emergencyMsg: [''],
+        NoAgentMsg: [''],
+        customPreQueueMsg: [''],
+        badWeatherMsg: [''],
       }),
       features: this.fb.group({
-        surveys: '',
+        surveys: [''],
       }),
       caseinfoiteration: this.fb.group({
-        callerID: '',
-        Unit: '',
-        Segment: '',
-        function: '',
-        callType: '',
+        callerID: [''],
+        Unit: [''],
+        Segment: [''],
+        function: [''],
+        callType: ['']
       }),
       tfnLists: this.fb.array([this.tfnLists]),
       targets: this.fb.array([this.targets]),
 
       WWEfeatures: this.fb.group({
         featureValuesKeyDropVal: [''],
-        userStoryTitle: [''],
+        userStoryTitle: ['', Validators.required],
         ENT_Prblm_Statement: ['', Validators.required],
         ENT_Additional_Information: ['', Validators.required],
         shortDesc1: ['', Validators.required],
@@ -285,11 +285,11 @@ export class AppComponent {
   }
 
   otherEnteredData() {
-    let val = this.routingForm.get('WWEfeatures').get('OtherData');
-    const dropDownValue = this.featureValuesKeyDrop(String(this.displayNameDynamic))
+    const val = this.routingForm.get('WWEfeatures').get('OtherData');
+    const dropDownValue = this.featureValuesKeyDrop(String(this.displayNameDynamic));
     dropDownValue.push(val.value);
-    this.routingForm.get('WWEfeatures').patchValue({ "featureValuesKeyDropVal": val });
-    this.routingForm.get('WWEfeatures').patchValue({ "OtherData": "" });
+    this.routingForm.get('WWEfeatures').patchValue({ featureValuesKeyDropVal: val });
+    this.routingForm.get('WWEfeatures').patchValue({ OtherData: '' });
   }
 
   onSelectFile(event) {
@@ -354,37 +354,32 @@ export class AppComponent {
 
       const formDataForAPI = new FormData();
       formDataForAPI.append('name', shrtDec);
+      // tslint:disable-next-line: max-line-length
       formDataForAPI.append('c_DeliverBy', this.dateFormat.transform(this.routingForm.get('request').get('ENT_DeliveryDate').value, 'yyyy/MM/dd'));
-      formDataForAPI.append('createdBy', this.routingForm.get('request').get('selectedTeam').value);
+      formDataForAPI.append('scrumTeam', this.routingForm.get('request').get('selectedTeam').value);
+      formDataForAPI.append('createdBy', this.routingForm.get('request').get('createdBy').value);
       formDataForAPI.append('c_AcceptanceCriteria', JSON.stringify(formData.value.itemRows));
-      // formDataForAPI.append('file', this.fileToUpload);
-
-      this.wweFeatureJson = {
-        description: shrtDec,
-        c_DeliverBy: this.dateFormat.transform(this.routingForm.get('request').get('ENT_DeliveryDate').value, 'yyyy/MM/dd'),
-        createdBy: this.routingForm.get('request').get('selectedTeam').value,
-        c_AcceptanceCriteria: JSON.stringify(formData.value.itemRows),
-        attachments: this.attachmentsVal
-      };
-
-      // this.wweJson.emit(this.wweFeatureJson);
-
-      this.createWWEFeature(this.wweFeatureJson, formDataForAPI);
+      formDataForAPI.append('userStoryTitle', formData.value.WWEfeatures.userStoryTitle);
+      this.createWWEFeature(formDataForAPI);
     }
   }
 
-  createWWEFeature(fb: string, formDataForAPI) {
+  createWWEFeature(formDataForAPI) {
     const body = new FormData();
     body.append('attachments', this.fileToUpload);
     body.append('c_AcceptanceCriteria', formDataForAPI.get('c_AcceptanceCriteria'));
     body.append('c_DeliverBy', formDataForAPI.get('c_DeliverBy'));
-    body.append('createdBy', '');
+    body.append('createdBy', formDataForAPI.get('createdBy'));
+    body.append('scrumTeam', formDataForAPI.get('scrumTeam'));
     body.append('description', formDataForAPI.get('name'));
-    // body.append('formattedID', formDataForAPI.get('formattedID'));
+    body.append('userStoryTitle', formDataForAPI.get('userStoryTitle'));
     body.append('name', '');
     body.append('notes', '');
+    body.append('dynamicSelect', this.selectedOtherData);
     body.append('project', '/project/' + formDataForAPI.get('createdBy'));
-    // body.append('scheduleState', formDataForAPI.get('scheduleState'));
+
+    console.log('data sending -> ', body);
+
 
     this.http.post('http://localhost:8080/create', body).subscribe(
       (res) => {
