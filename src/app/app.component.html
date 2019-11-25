@@ -194,33 +194,43 @@
                       <fieldset>
                         <legend>{{data ? data :'Display Name'}}</legend>
 
-                        <div class="half_check" *ngFor="let displayValue of featureValuesKeyDrop(data); let i =index">
+                        <div class="half_check"
+                          *ngFor="let displayValue of featureValuesKeyDrop(data); let i =index; let last= last">
                           <span *ngIf="i%2 == 0">
-                            <mat-checkbox (change)="testVal($event)" [value]="displayValue">{{displayValue}}
+                            <mat-checkbox (change)="testVal($event)" [value]="displayValue">
+                              {{displayValue.split('+')[0]}}
                             </mat-checkbox>
+                            <span *ngIf="displayValue.split('+')[1]?.length > 0" (click)="remove(i,data)">
+                              <mat-icon>delete</mat-icon>
+                            </span>
+
+                            <div *ngIf="last">
+                              <mat-checkbox class="others_label" (change)="testVal($event)" [value]="data">{{"Others"}}
+                              </mat-checkbox>
+                            </div>
+
                           </span>
                           <span *ngIf="i%2 != 0">
-                            <mat-checkbox (change)="testVal($event)" [value]="displayValue">{{displayValue}}
+                            <mat-checkbox (change)="testVal($event)" [value]="displayValue">
+                              {{displayValue.split('+')[0]}}
                             </mat-checkbox>
+                            <span *ngIf="displayValue.split('+')[1]?.length > 0" (click)="remove(i,data)">
+                              <mat-icon>delete</mat-icon>
+                            </span>
+
+                            <div *ngIf="last" style="margin-left: -100%;margin-top: 5%;">
+                              <mat-checkbox class="others_label" (change)="testVal($event)" [value]="data">{{"Others"}}
+                              </mat-checkbox>
+                            </div>
                           </span>
-
                         </div>
 
-                        <div class="others">
-                          <mat-checkbox class="others_label" (change)="testVal($event)" [value]="'Others'">{{"Others"}}
-                          </mat-checkbox>
-                        </div>
-                        <div *ngIf="selectedOtherData ==  'Others'">
-
+                        <div *ngIf="selectedOtherData ==  data">
                           <input matInput class="half-width" placeholder="OtherData" formControlName="OtherData">
-
-                          <input type="button" (click)="otherEnteredData()" class="btn btn-primary" value="Add">
-                          <input type="button" (click)="otherEnteredData()" class="btn btn-danger delete"
-                            value="Delete">
+                          <input type="button" (click)="otherEnteredData(data)" class="btn btn-primary" value="Add">
                         </div>
 
                       </fieldset>
-
                       &nbsp;&nbsp;&nbsp;&nbsp;
                     </td>
 
@@ -347,16 +357,6 @@
                     </div>
                   </div>
                 </fieldset>
-              </div>
-
-              <div
-                *ngIf="selectedValues && selectedValues.length>0 && routingForm.get('request').value.selectedValue ==3">
-
-                <app-wwe-feature [deliverDate]="routingForm.get('request').value.ENT_DeliveryDate"
-                  [scrumTeam]="routingForm.get('request').value.selectedTeam"
-                  [bizUnitVal]="routingForm.get('request').value.bizUnit" [selectedRequestType]="selectedValues"
-                  (wweJson)="wweJsonValClick()">
-                </app-wwe-feature>
               </div>
 
               <button mat-stroked-button mat-flat-button style="margin-left: 40%;margin-top: 2%;margin-bottom: 2%;"

@@ -22,14 +22,24 @@ export class AppComponent {
   attachmentsVal: any;
   show = false;
   size = false;
-  fileToUpload: File = null;
-  selectedValues: any;
   selectedRequestType: any;
+  multipleCheckBox: any;
+  dispalyNameDropDown: string[];
+  requestCategorySelecte: any;
+  selectedOtherData: any;
+  displayNameDynamic = [];
+  fileData: File;
 
   requestCategory = [
     { value: '1', label: 'Voice Routing' },
     { value: '2', label: 'Digital Routing' },
     { value: '3', label: 'WWE' },
+  ];
+
+  requestType = [
+    { value: '1', label: 'Existing Callflow Update' },
+    { value: '2', label: 'New Callflow Setup' },
+    { value: '3', label: 'WWE Configuration Change' },
   ];
 
   scrumteam = [
@@ -58,17 +68,6 @@ export class AppComponent {
     { value: '251096380628', label: 'Warriors-Orx CS' },
   ];
 
-  requestType = [
-    { value: '1', label: 'Existing Callflow Update' },
-    { value: '2', label: 'New Callflow Setup' },
-    { value: '3', label: 'WWE Configuration Change' },
-  ];
-
-  transfers = [
-    { value: '1', label: '1 Step' },
-    { value: '2', label: '2 Step' }
-  ];
-
   private featureValues = new Map<string, string[]>([
     ['Case Information (Iteration)', ['Caller ID', 'Unit', 'Segment', 'Function', 'CallType', 'UUID']],
     ['Case Information (Toast pop)', ['Caller Id', 'Unit']],
@@ -85,13 +84,6 @@ export class AppComponent {
     ['Optum', ['OptumCare', 'OptumRx', 'AARP']],
   ]);
 
-  multipleCheckBox: any;
-
-  dispalyNameDropDown: string[];
-  requestCategorySelecte: any;
-  selectedOtherData: any;
-  displayNameDynamic = [];
-  fileData: any;
 
   constructor(private fb: FormBuilder, private http: HttpClient, private dialog: MatDialog, private dateFormat: DatePipe) { }
 
@@ -122,7 +114,7 @@ export class AppComponent {
         bizSegment: [''],
         ENT_DeliveryDate: [''],
         selectedTeam: [''],
-        createdBy: ['', [Validators.required, Validators.pattern("[^ @optum.com]*@optum.com[^ @optum.com]*")]]
+        createdBy: ['', [Validators.required, Validators.pattern('[^ @optum.com]*@optum.com[^ @optum.com]*')]]
       }),
       routingDetails: this.fb.group({
         name: [''],
@@ -132,26 +124,12 @@ export class AppComponent {
         callType: [''],
         skills: [''],
       }),
-
       preQueueDetails: this.fb.group({
         emergencyMsg: [''],
         NoAgentMsg: [''],
         customPreQueueMsg: [''],
         badWeatherMsg: [''],
       }),
-      features: this.fb.group({
-        surveys: [''],
-      }),
-      caseinfoiteration: this.fb.group({
-        callerID: [''],
-        Unit: [''],
-        Segment: [''],
-        function: [''],
-        callType: ['']
-      }),
-      tfnLists: this.fb.array([this.tfnLists]),
-      targets: this.fb.array([this.targets]),
-
       WWEfeatures: this.fb.group({
         featureValuesKeyDropVal: [''],
         userStoryTitle: ['', Validators.required],
@@ -164,7 +142,6 @@ export class AppComponent {
         fileInfo: ['']
       }),
       itemRows: this.fb.array([this.initItemRows()])
-
     });
   }
 
@@ -179,12 +156,9 @@ export class AppComponent {
     });
   }
 
-
-
   get formArr() {
     return this.routingForm.get('itemRows') as FormArray;
   }
-
 
   addNewRow(i: number) {
     this.indexNumber = i;
@@ -194,7 +168,6 @@ export class AppComponent {
   deleteRow(index: number) {
     this.formArr.removeAt(index);
   }
-
 
   editRow(i: number): void {
     this.show = !this.show;
@@ -219,59 +192,48 @@ export class AppComponent {
   }
 
   submitForm(event) {
-    console.log(this.routingForm.value);
   }
 
   get bizUnits(): string[] {
-    // return this.unitSegmentMap.keys();
     return Array.from(this.unitSegmentMap.keys());
   }
 
   get bizSegments(): string[] {
     return this.unitSegmentMap.get(this.bizUnit);
-    // return Array.from(this.unitSegmentMap.keys());
   }
 
   OnChange($event) {
-    // console.log($event.source.value);
-    // tslint:disable-next-line: triple-equals
-    if ($event.checked == true && $event.source.value == 'isCustomPreQueueMsg') {
-      // console.log($event.source.value);
+    if ($event.checked === true && $event.source.value === 'isCustomPreQueueMsg') {
       this.showCustomPreQueueMsg = true;
-      // tslint:disable-next-line: triple-equals
-    } else if ($event.checked == false && $event.source.value == 'isCustomPreQueueMsg') {
+    } else if ($event.checked === false && $event.source.value === 'isCustomPreQueueMsg') {
       this.showCustomPreQueueMsg = false;
+      // tslint:disable-next-line: no-string-literal
       this.routingForm.get('preQueueDetails')['controls'].customPreQueueMsg.reset();
-      // tslint:disable-next-line: triple-equals
-    } else if ($event.checked == true && $event.source.value == 'isEmergencyMsg') {
+    } else if ($event.checked === true && $event.source.value === 'isEmergencyMsg') {
       this.showEmergencyMsg = true;
-      // tslint:disable-next-line: triple-equals
-    } else if ($event.checked == false && $event.source.value == 'isEmergencyMsg') {
+    } else if ($event.checked === false && $event.source.value === 'isEmergencyMsg') {
       this.showEmergencyMsg = false;
+      // tslint:disable-next-line: no-string-literal
       this.routingForm.get('preQueueDetails')['controls'].emergencyMsg.reset();
-      // tslint:disable-next-line: triple-equals
-    } else if ($event.checked == true && $event.source.value == 'isBadWeatherMsg') {
+    } else if ($event.checked === true && $event.source.value === 'isBadWeatherMsg') {
       this.showBadWeatherMsg = true;
-      // tslint:disable-next-line: triple-equals
-    } else if ($event.checked == false && $event.source.value == 'isBadWeatherMsg') {
+    } else if ($event.checked === false && $event.source.value === 'isBadWeatherMsg') {
       this.showBadWeatherMsg = false;
+      // tslint:disable-next-line: no-string-literal
       this.routingForm.get('preQueueDetails')['controls'].badWeatherMsg.reset();
-      // tslint:disable-next-line: triple-equals
-    } else if ($event.checked == true && $event.source.value == 'isNoAgentMsg') {
+    } else if ($event.checked === true && $event.source.value === 'isNoAgentMsg') {
       this.showNoAgentMsg = true;
-      // tslint:disable-next-line: triple-equals
-    } else if ($event.checked == false && $event.source.value == 'isNoAgentMsg') {
+    } else if ($event.checked === false && $event.source.value === 'isNoAgentMsg') {
       this.showNoAgentMsg = false;
+      // tslint:disable-next-line: no-string-literal
       this.routingForm.get('preQueueDetails')['controls'].NoAgentMsg.reset();
     }
 
   }
   wweJsonValClick(event) {
-    console.log('came here ---- ', event);
   }
 
   openDialog(event) {
-    console.log('event ', event);
     this.requestCategorySelecte = event.value;
   }
 
@@ -284,13 +246,21 @@ export class AppComponent {
       return this.featureValues.get(selectedRequest);
     }
   }
+  remove(daata, data) {
+    this.featureValues.get(data).splice(daata, 1);
+  }
 
-  otherEnteredData() {
+  otherEnteredData(data) {
     const val = this.routingForm.get('WWEfeatures').get('OtherData');
-    const dropDownValue = this.featureValuesKeyDrop(String(this.displayNameDynamic));
-    dropDownValue.push(val.value);
-    this.routingForm.get('WWEfeatures').patchValue({ featureValuesKeyDropVal: val });
-    this.routingForm.get('WWEfeatures').patchValue({ OtherData: '' });
+    if (val.value.length > 0) {
+      const dropDownValue = this.featureValuesKeyDrop(String(data));
+      dropDownValue.push(val.value + '+new');
+      this.routingForm.get('WWEfeatures').patchValue({ featureValuesKeyDropVal: val });
+      this.routingForm.get('WWEfeatures').patchValue({ OtherData: '' });
+    } else {
+      alert('please the data.');
+    }
+
   }
 
   onSelectFile(event) {
@@ -298,19 +268,15 @@ export class AppComponent {
     const reader = new FileReader();
     this.fileData = event.target.files;
     const fileInfo = event.target.files[0];
-    this.fileToUpload = fileInfo;
     this.routingForm.get('WWEfeatures').get('fileInfo').setValue(fileInfo);
     reader.readAsDataURL(fileInfo);
-    console.log(fileInfo.size + ' Bytes');
-    console.log(fileInfo.size / 1024 / 1024 + ' MB');
+    // console.log(fileInfo.size + ' Bytes');
+    // console.log(fileInfo.size / 1024 / 1024 + ' MB');
     if (fileInfo.size / 1024 / 1024 > 5) {
       this.size = true;
-      console.log('file is bigger than 5MB');
+      // console.log('file is bigger than 5MB');
       return;
-      
     }
-
-    // this.fileName = 'No file is selected';
     if (fileInfo) {
       this.fileToBase64(event, (result: any, headers: any) => {
         this.attachmentsVal = result;
@@ -324,22 +290,23 @@ export class AppComponent {
     let header: any;
     if (event.target.files && event.target.files[0]) {
       const srcFile = event.target.files[0];
-      // if (srcFile.type !== 'text/plain') {
-      //   this.invalidFileMsg = 'Only .txt File type is allowed';
-      // }
       const reader = new FileReader();
       const textReader = new FileReader();
       reader.readAsDataURL(srcFile); // read file as data url
+      // tslint:disable-next-line: no-shadowed-variable
       reader.onload = (event: any) => { // called once readAsDataURL is completed
-        url = (<FileReader>event.target).result;
+        // tslint:disable-next-line: no-angle-bracket-type-assertion
+        // tslint:disable-next-line: whitespace
+        url = (event.target as FileReader).result;
         const index = url.indexOf(',') + 1;
-        url = url.slice(index)
+        url = url.slice(index);
         if (typeof callback === 'function') {
         }
       };
-      textReader.onload = function (e) {
+      // tslint:disable-next-line: only-arrow-functions
+      textReader.onload = function () {
         header = textReader.result;
-        header = header.split('\n')
+        header = header.split('\n');
         header = header[0].split('|');
         callback(url, header);
       };
@@ -369,7 +336,7 @@ export class AppComponent {
 
   createWWEFeature(formDataForAPI) {
     const body = new FormData();
-    body.append('attachments', this.fileToUpload);
+    body.append('attachments', this.fileData);
     body.append('c_AcceptanceCriteria', formDataForAPI.get('c_AcceptanceCriteria'));
     body.append('c_DeliverBy', formDataForAPI.get('c_DeliverBy'));
     body.append('createdBy', formDataForAPI.get('createdBy'));
@@ -380,10 +347,7 @@ export class AppComponent {
     body.append('notes', '');
     body.append('dynamicSelect', this.selectedOtherData);
     body.append('project', '/project/' + formDataForAPI.get('createdBy'));
-
     console.log('data sending -> ', body);
-
-
     this.http.post('http://localhost:8080/create', body).subscribe(
       (res) => {
         console.log('res --- ', res);
@@ -393,7 +357,6 @@ export class AppComponent {
   }
 
   validateCreatedBy() {
-
   }
 
   testVal(data) {
@@ -404,22 +367,17 @@ export class AppComponent {
   }
 
   onChangeForVal(event) {
-    console.log('event --- ', event);
     const val = event.source.value;
     if (event.checked) {
       this.displayNameDynamic.push(val);
       this.dispalyNameDropDown = this.featureValuesKeyDrop(String(val));
     } else {
-      // const i = this.displayNameDynamic.findIndex(x => x.value === val);
-      // this.displayNameDynamic.slice(i, 1);
-      // this.dispalyNameDropDown = [];
-
       const i = this.displayNameDynamic.indexOf(val);
-      console.log('i========== ', i);
       this.displayNameDynamic.splice(i, 1);
     }
-    console.log('displayNameDynamic ', this.displayNameDynamic);
-    console.log('this.dispalyNameDropDown --- ', this.dispalyNameDropDown);
+  }
+
+  deleteEnteredData() {
   }
 
 }
