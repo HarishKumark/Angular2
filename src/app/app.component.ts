@@ -90,7 +90,7 @@ export class AppComponent {
   dispalyNameDropDown: string[];
   requestCategorySelecte: any;
   selectedOtherData: any;
-  displayNameDynamic: any;
+  displayNameDynamic = [];
 
   constructor(private fb: FormBuilder, private http: HttpClient, private dialog: MatDialog, private dateFormat: DatePipe) { }
 
@@ -402,13 +402,20 @@ export class AppComponent {
 
   onChangeForVal(event) {
     console.log('event --- ', event);
-    this.displayNameDynamic = event.source.value;
+    const val = event.source.value;
     if (event.checked) {
-      this.dispalyNameDropDown = this.featureValuesKeyDrop(String(event.source.value));
+      this.displayNameDynamic.push(val);
+      this.dispalyNameDropDown = this.featureValuesKeyDrop(String(val));
     } else {
-      this.dispalyNameDropDown = [];
-    }
+      // const i = this.displayNameDynamic.findIndex(x => x.value === val);
+      // this.displayNameDynamic.slice(i, 1);
+      // this.dispalyNameDropDown = [];
 
+      const i = this.displayNameDynamic.indexOf(val);
+      console.log('i========== ', i);
+      this.displayNameDynamic.splice(i, 1);
+    }
+    console.log('displayNameDynamic ', this.displayNameDynamic);
     console.log('this.dispalyNameDropDown --- ', this.dispalyNameDropDown);
   }
 
