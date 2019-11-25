@@ -271,10 +271,11 @@
 
                 <div class="attach_a_file">
                   <span (click)="fileUpload.click()" class="attachfile">
-                    <span *ngFor="let fileValues of fileData; let isLast = last;">
-                      {{fileValues.name}}{{isLast?',':''}}
-                    </span>
-                    {{fileData ?'':'Attach a file'}}</span>
+                    <div *ngFor="let fileValues of fileData; let isLast = last;">
+                      {{fileValues.name}}{{isLast?'':','}}
+                    </div>
+                    {{fileData ?'':'Attach a file'}}
+                  </span>
                   <input type="file" class=" file_upload" #fileUpload type='file' (change)="onSelectFile($event)"
                     multiple style="visibility: hidden;" />
                   <br>
