@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { FormBuilder, FormGroup, FormArray, Validators } from '@angular/forms';
+import { ReactiveFormsModule, FormBuilder, FormGroup, FormsModule, FormControl, FormArray, Validators } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { MatDialog } from '@angular/material';
 import { DatePipe } from '@angular/common';
@@ -91,6 +91,7 @@ export class AppComponent {
   requestCategorySelecte: any;
   selectedOtherData: any;
   displayNameDynamic = [];
+  fileData: any;
 
   constructor(private fb: FormBuilder, private http: HttpClient, private dialog: MatDialog, private dateFormat: DatePipe) { }
 
@@ -121,7 +122,7 @@ export class AppComponent {
         bizSegment: [''],
         ENT_DeliveryDate: [''],
         selectedTeam: [''],
-        createdBy: ['', [Validators.required, Validators.email]]
+        createdBy: ['', [Validators.required, Validators.pattern("[^ @optum.com]*@optum.com[^ @optum.com]*")]]
       }),
       routingDetails: this.fb.group({
         name: [''],
@@ -295,6 +296,7 @@ export class AppComponent {
   onSelectFile(event) {
     this.size = false;
     const reader = new FileReader();
+    this.fileData = event.target.files;
     const fileInfo = event.target.files[0];
     this.fileToUpload = fileInfo;
     this.routingForm.get('WWEfeatures').get('fileInfo').setValue(fileInfo);
@@ -305,6 +307,7 @@ export class AppComponent {
       this.size = true;
       console.log('file is bigger than 5MB');
       return;
+      
     }
 
     // this.fileName = 'No file is selected';
