@@ -1,24 +1,23 @@
 <div class="grid-container">
   <div class="header">
     <mat-toolbar color="orange" class="navbar app-toolbar">
-      <span class="fill-remaining-space">User Story Template</span>
+      <span class="fill-remaining-space">OMNI Chanel User Story Template</span>
     </mat-toolbar>
   </div>
   <div style="padding-top: 5%">
-    <div class="container" fxLayout="row" fxLayout.xs="column" fxLayoutGap="2%" fxLayoutAlign="left"
-      style="height: calc(100vh - -39vw);">
+    <div class="container" fxLayout="row" fxLayout.xs="column" fxLayoutGap="2%" fxLayoutAlign="left" class=""
+      [ngClass]="{'main_div': (routingForm.get('WWEfeatures').invalid && routingForm.get('itemRows').invalid),'show_submit ': (routingForm.get('WWEfeatures').valid && routingForm.get('itemRows').valid)}">
       <form [formGroup]="routingForm" class="form" (ngSubmit)="submitForm($event)">
 
 
         <div class="grid-left-side" id="slider1">
           <div>
-            <!-- <fieldset>
-            <legend>User Story Details</legend> -->
-            <div formGroupName="request">
+
+            <div formGroupName="WWEfeatures">
               <div class="l-item1">
                 <mat-label>Business Unit</mat-label>
                 <mat-form-field class="full-width" appearance="outline">
-                  <mat-select formControlName="bizUnit" [(ngModel)]="bizUnit" panelClass="my-select-panel-class">
+                  <mat-select formControlName="bizUnit" panelClass="my-select-panel-class">
                     <mat-option *ngFor="let bizUnit of bizUnits" [value]="bizUnit">{{bizUnit}}
                     </mat-option>
                   </mat-select>
@@ -62,19 +61,12 @@
                   <input class="form-control" matInput placeholder="Example@Optum.com" formControlName="createdBy"
                     type="email">
                 </mat-form-field>
-
-                <div *ngIf="routingForm.get('request').value.createdBy.errors" class="invalid-feedback">
-                  <div *ngIf="routingForm.get('request').value.createdBy.errors.required">Email is required</div>
-                  <div *ngIf="routingForm.get('request').value.createdBy.errors.email">Email must be a valid email
-                    address</div>
-                </div>
               </div>
 
               <div class="l-item6">
                 <mat-label>Request Category</mat-label>
                 <mat-form-field class="full-width" appearance="outline">
-                  <mat-select formControlName="selectedValue" (selectionChange)="openDialog($event)"
-                    (click)="openDialog($event)">
+                  <mat-select formControlName="selectedValue" (selectionChange)="openDialog($event)">
                     <mat-option *ngFor="let class of requestCategory" [value]="class.value">
                       {{class.label}}
                     </mat-option>
@@ -82,13 +74,18 @@
                 </mat-form-field>
               </div>
 
-              <div class="l-item6" *ngIf="requestCategorySelecte === '3'">
-                <div *ngFor="let interest of multipleCheckBox; let i = index">
-                  <mat-checkbox (change)="onChangeForVal($event)" [value]="interest">{{interest}} </mat-checkbox>
-                </div>
+
+              <div class="l-item6" *ngIf="routingForm.get('WWEfeatures').value.selectedValue =='3'">
+                <fieldset>
+                  <legend>WWE Features</legend>
+                  <div *ngFor="let interest of multipleCheckBox; let i = index">
+                    <mat-checkbox (change)="onChangeForVal($event)" [value]="interest"
+                      formControlName="wweCheckBoxValues">{{interest}} </mat-checkbox>
+                  </div>
+                </fieldset>
               </div>
             </div>
-            <!-- </fieldset> -->
+
           </div>
         </div>
 
@@ -97,7 +94,7 @@
             <div class="vl"></div>
             <div>
               <!-- Routing Details Scenario Start -->
-              <fieldset *ngIf="routingForm.get('request').value.selectedValue ==1" class=field>
+              <fieldset *ngIf="routingForm.get('WWEfeatures').value.selectedValue ==1" class=field>
                 <legend>Voice Routing Requirements</legend>
                 <div class="form" formGroupName="routingDetails">
                   <mat-form-field class="full-width">
@@ -133,7 +130,7 @@
             </div>
 
             <div>
-              <fieldset *ngIf="routingForm.get('request').value.selectedValue ==2" class=field>
+              <fieldset *ngIf="routingForm.get('WWEfeatures').value.selectedValue ==2" class=field>
                 <legend>Pre Queue Scenario</legend>
                 <div class="form" formGroupName="preQueueDetails"
                   *ngIf="routingForm.get('routingDetails').value.selectedValue ==3">
@@ -197,38 +194,37 @@
                         <div class="half_check"
                           *ngFor="let displayValue of featureValuesKeyDrop(data); let i =index; let last= last">
                           <span *ngIf="i%2 == 0">
-                            <mat-checkbox (change)="testVal($event)" [value]="displayValue">
+                            <mat-checkbox (change)="testVal($event)" [value]="displayValue"
+                              formControlName="displayValues">
                               {{displayValue.split('+')[0]}}
                             </mat-checkbox>
                             <span *ngIf="displayValue.split('+')[1]?.length > 0" (click)="remove(i,data)">
                               <mat-icon>delete</mat-icon>
                             </span>
-
-                            <div *ngIf="last">
-                              <mat-checkbox class="others_label" (change)="testVal($event)" [value]="data">{{"Others"}}
-                              </mat-checkbox>
-                            </div>
 
                           </span>
                           <span *ngIf="i%2 != 0">
                             <mat-checkbox (change)="testVal($event)" [value]="displayValue">
                               {{displayValue.split('+')[0]}}
+                              <span *ngIf="displayValue.split('+')[1]?.length > 0" (click)="remove(i,data)">
+                                <mat-icon>delete</mat-icon>
+                              </span>
                             </mat-checkbox>
-                            <span *ngIf="displayValue.split('+')[1]?.length > 0" (click)="remove(i,data)">
-                              <mat-icon>delete</mat-icon>
-                            </span>
 
-                            <div *ngIf="last" style="margin-left: -100%;margin-top: 5%;">
-                              <mat-checkbox class="others_label" (change)="testVal($event)" [value]="data">{{"Others"}}
-                              </mat-checkbox>
-                            </div>
                           </span>
                         </div>
-
-                        <div *ngIf="selectedOtherData ==  data">
-                          <input matInput class="half-width" placeholder="OtherData" formControlName="OtherData">
-                          <input type="button" (click)="otherEnteredData(data)" class="btn btn-primary" value="Add">
+                        <div class="others_div">
+                          <div style="float: left;margin-right: 15px;">
+                            <mat-checkbox class="others_label" (change)="testVal($event)" [value]="data" class="font">
+                              {{"Others"}}
+                            </mat-checkbox>
+                          </div>
+                          <div *ngIf="selectedOtherData ==  data" style="position: relative;top: -10px;">
+                            <input matInput class="half-width" placeholder="OtherData" formControlName="OtherData">
+                            <input type="button" (click)="otherEnteredData(data)" class="btn btn-primary add" value="Add">
+                          </div>
                         </div>
+
 
                       </fieldset>
                       &nbsp;&nbsp;&nbsp;&nbsp;
@@ -244,7 +240,7 @@
                     <legend>Short Discription</legend>
                     <tr>
                       <td>
-                        <span matPrefix>As a &nbsp;</span>
+                        <span matPrefix class="font">As a &nbsp;</span>
                       </td>
                       <td width="91%">
                         <mat-form-field class="example-full-width">
@@ -254,7 +250,7 @@
                     </tr>
                     <tr>
                       <td>
-                        <span matPrefix>I need &nbsp;</span>
+                        <span matPrefix class="font">I need &nbsp;</span>
                       </td>
                       <td>
                         <mat-form-field class="example-full-width">
@@ -264,7 +260,7 @@
                     </tr>
                     <tr>
                       <td>
-                        <span matPrefix>so that &nbsp;</span>
+                        <span matPrefix class="font">so that &nbsp;</span>
                       </td>
                       <td>
                         <mat-form-field class="example-full-width">
@@ -280,11 +276,11 @@
                 <br>
 
                 <div class="attach_a_file">
-                  <span (click)="fileUpload.click()" class="attachfile">
+                  <span (click)="fileUpload.click()" class="attachfile" class="font">
                     <div *ngFor="let fileValues of fileData; let isLast = last;">
                       {{fileValues.name}}{{isLast?'':','}}
                     </div>
-                    {{fileData ?'':'Attach a file'}}
+                    {{fileData ?'':'Attachment'}}
                   </span>
                   <input type="file" class=" file_upload" #fileUpload type='file' (change)="onSelectFile($event)"
                     multiple style="visibility: hidden;" />
@@ -353,19 +349,17 @@
                       <!-- [disabled]="!routingForm.controls.itemRows.valid" -->
                       <button class="btn btn-info" *ngIf="lastVal" type="button" (click)="addNewRow(i+1)"
                         [disabled]="!routingForm.controls.itemRows.valid" mat-button mat-raised-button
-                        color="primary">Add</button><br>
+                        color="primary">Add More</button><br>
                     </div>
                   </div>
                 </fieldset>
               </div>
-
-              <button mat-stroked-button mat-flat-button style="margin-left: 40%;margin-top: 2%;margin-bottom: 2%;"
-                [disabled]="!(routingForm.get('WWEfeatures').valid && routingForm.get('itemRows').valid)"
-                (click)="wweFeatureClick(routingForm)">Submit</button>
-
             </div>
-
           </div>
+        </div>
+        <div *ngIf="(routingForm.get('WWEfeatures').valid && routingForm.get('itemRows').valid)">
+          <button class="btn btn-success submit" mat-stroked-button mat-flat-button
+            (click)="wweFeatureClick(routingForm)">Submit</button>
         </div>
       </form>
     </div>

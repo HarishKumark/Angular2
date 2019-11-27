@@ -22,10 +22,8 @@ export class AppComponent {
   attachmentsVal: any;
   show = false;
   size = false;
-  selectedRequestType: any;
   multipleCheckBox: any;
   dispalyNameDropDown: string[];
-  requestCategorySelecte: any;
   selectedOtherData: any;
   displayNameDynamic = [];
   fileData: File;
@@ -106,16 +104,6 @@ export class AppComponent {
 
   createForm() {
     this.routingForm = this.fb.group({
-      request: this.fb.group({
-        name: [''],
-        founder: [''],
-        selectedValue: [''],
-        bizUnit: [''],
-        bizSegment: [''],
-        ENT_DeliveryDate: [''],
-        selectedTeam: [''],
-        createdBy: ['', [Validators.required, Validators.pattern('[^ @optum.com]*@optum.com[^ @optum.com]*')]]
-      }),
       routingDetails: this.fb.group({
         name: [''],
         founder: [''],
@@ -131,7 +119,12 @@ export class AppComponent {
         badWeatherMsg: [''],
       }),
       WWEfeatures: this.fb.group({
-        featureValuesKeyDropVal: [''],
+        bizUnit: ['', Validators.required],
+        bizSegment: ['', Validators.required],
+        ENT_DeliveryDate: ['', Validators.required],
+        selectedTeam: ['', Validators.required],
+        createdBy: ['', [Validators.required, Validators.pattern('^[a-z0-9._%+-]*@Optum.com$')]],
+        selectedValue: ['', Validators.required],
         userStoryTitle: ['', Validators.required],
         ENT_Prblm_Statement: ['', Validators.required],
         ENT_Additional_Information: ['', Validators.required],
@@ -139,7 +132,9 @@ export class AppComponent {
         shortDesc2: ['', Validators.required],
         shortDesc3: ['', Validators.required],
         OtherData: [''],
-        fileInfo: ['']
+        fileInfo: ['', Validators.required],
+        displayValues: ['', Validators.required],
+        wweCheckBoxValues: ['', Validators.required]
       }),
       itemRows: this.fb.array([this.initItemRows()])
     });
@@ -199,7 +194,7 @@ export class AppComponent {
   }
 
   get bizSegments(): string[] {
-    return this.unitSegmentMap.get(this.bizUnit);
+    return this.unitSegmentMap.get(this.routingForm.get('WWEfeatures').get('bizUnit').value);
   }
 
   OnChange($event) {
@@ -230,11 +225,15 @@ export class AppComponent {
     }
 
   }
+
   wweJsonValClick(event) {
   }
 
+  get requestCategoryVal() {
+    return this.requestCategory;
+  }
+
   openDialog(event) {
-    this.requestCategorySelecte = event.value;
   }
 
   get featureValuesKey(): string[] {
@@ -246,6 +245,7 @@ export class AppComponent {
       return this.featureValues.get(selectedRequest);
     }
   }
+
   remove(daata, data) {
     this.featureValues.get(data).splice(daata, 1);
   }
@@ -255,35 +255,31 @@ export class AppComponent {
     if (val.value.length > 0) {
       const dropDownValue = this.featureValuesKeyDrop(String(data));
       dropDownValue.push(val.value + '+new');
-      this.routingForm.get('WWEfeatures').patchValue({ featureValuesKeyDropVal: val });
+      // this.routingForm.get('WWEfeatures').patchValue({ featureValuesKeyDropVal: val });
       this.routingForm.get('WWEfeatures').patchValue({ OtherData: '' });
     } else {
       alert('please the data.');
     }
-
   }
 
   onSelectFile(event) {
     this.size = false;
     const reader = new FileReader();
     this.fileData = event.target.files;
-    const fileInfo = event.target.files[0];
-    this.routingForm.get('WWEfeatures').get('fileInfo').setValue(fileInfo);
-    reader.readAsDataURL(fileInfo);
-    // console.log(fileInfo.size + ' Bytes');
-    // console.log(fileInfo.size / 1024 / 1024 + ' MB');
-    if (fileInfo.size / 1024 / 1024 > 5) {
-      this.size = true;
-      // console.log('file is bigger than 5MB');
-      return;
-    }
-    if (fileInfo) {
-      this.fileToBase64(event, (result: any, headers: any) => {
-        this.attachmentsVal = result;
-      });
-    }
+    // const fileInfo = event.target.files[0];
+    this.routingForm.get('WWEfeatures').patchValue({ fileInfo: this.fileData });
+    // this.routingForm.get('WWEfeatures').get('fileInfo').setValue(this.fileData);
+    // reader.readAsDataURL(fileInfo);
+    // if (fileInfo.size / 1024 / 1024 > 5) {
+    //   this.size = true;
+    //   return;
+    // }
+    // if (fileInfo) {
+    //   this.fileToBase64(event, (result: any, headers: any) => {
+    //     this.attachmentsVal = result;
+    //   });
+    // }
   }
-
 
   public fileToBase64(event, callback) {
     let url: any;
@@ -325,9 +321,9 @@ export class AppComponent {
       const formDataForAPI = new FormData();
       formDataForAPI.append('name', shrtDec);
       // tslint:disable-next-line: max-line-length
-      formDataForAPI.append('c_DeliverBy', this.dateFormat.transform(this.routingForm.get('request').get('ENT_DeliveryDate').value, 'yyyy/MM/dd'));
-      formDataForAPI.append('scrumTeam', this.routingForm.get('request').get('selectedTeam').value);
-      formDataForAPI.append('createdBy', this.routingForm.get('request').get('createdBy').value);
+      formDataForAPI.append('c_DeliverBy', this.dateFormat.transform(this.routingForm.get('WWEfeatures').get('ENT_DeliveryDate').value, 'yyyy/MM/dd'));
+      formDataForAPI.append('scrumTeam', this.routingForm.get('WWEfeatures').get('selectedTeam').value);
+      formDataForAPI.append('createdBy', this.routingForm.get('WWEfeatures').get('createdBy').value);
       formDataForAPI.append('c_AcceptanceCriteria', JSON.stringify(formData.value.itemRows));
       formDataForAPI.append('userStoryTitle', formData.value.WWEfeatures.userStoryTitle);
       this.createWWEFeature(formDataForAPI);
@@ -336,13 +332,13 @@ export class AppComponent {
 
   createWWEFeature(formDataForAPI) {
     const body = new FormData();
-    body.append('attachments', this.fileData);
+    body.append('file', this.fileData);
     body.append('c_AcceptanceCriteria', formDataForAPI.get('c_AcceptanceCriteria'));
     body.append('c_DeliverBy', formDataForAPI.get('c_DeliverBy'));
     body.append('createdBy', formDataForAPI.get('createdBy'));
     body.append('scrumTeam', formDataForAPI.get('scrumTeam'));
     body.append('description', formDataForAPI.get('name'));
-    body.append('userStoryTitle', formDataForAPI.get('userStoryTitle'));
+    body.append('userStory', formDataForAPI.get('userStoryTitle'));
     body.append('name', '');
     body.append('notes', '');
     body.append('dynamicSelect', this.selectedOtherData);
